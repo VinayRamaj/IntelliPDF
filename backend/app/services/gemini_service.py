@@ -71,3 +71,25 @@ Rules:
 
     response = model.generate_content(prompt)
     return response.text
+
+
+def translate_pdf(text: str, language: str):
+    prompt = f"""
+You are a professional translator.
+
+Translate the following PDF into {language}.
+
+Rules:
+- Preserve the original meaning.
+- Keep headings and bullet points.
+- Do not summarize.
+- Translate the complete content.
+- Return only the translated text.
+
+PDF:
+
+{text}
+"""
+
+    response = model.generate_content(prompt)
+    return response.text

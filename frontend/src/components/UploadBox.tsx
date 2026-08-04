@@ -14,6 +14,9 @@ export default function UploadBox() {
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
 
+    const [language, setLanguage] = useState("Hindi");
+    const [translation, setTranslation] = useState("");
+
     const [loading, setLoading] = useState(false);
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -33,6 +36,7 @@ export default function UploadBox() {
             setNotes("");
             setAnswer("");
             setQuestion("");
+            setTranslation("");
         } catch (error) {
             console.error(error);
             alert("Upload failed");
@@ -42,11 +46,15 @@ export default function UploadBox() {
     const generateSummary = async () => {
         setLoading(true);
 
-        const response = await api.post("/ai/summary", {
-            text,
-        });
+        try {
+            const response = await api.post("/ai/summary", {
+                text,
+            });
 
-        setSummary(response.data.summary);
+            setSummary(response.data.summary);
+        } catch (error) {
+            alert("Summary failed");
+        }
 
         setLoading(false);
     };
@@ -54,11 +62,32 @@ export default function UploadBox() {
     const generateNotes = async () => {
         setLoading(true);
 
-        const response = await api.post("/ai/notes", {
-            text,
-        });
+        try {
+            const response = await api.post("/ai/notes", {
+                text,
+            });
 
-        setNotes(response.data.notes);
+            setNotes(response.data.notes);
+        } catch (error) {
+            alert("Notes generation failed");
+        }
+
+        setLoading(false);
+    };
+
+    const translatePDF = async () => {
+        setLoading(true);
+
+        try {
+            const response = await api.post("/ai/translate", {
+                text,
+                language,
+            });
+
+            setTranslation(response.data.translation);
+        } catch (error) {
+            alert("Translation failed");
+        }
 
         setLoading(false);
     };
@@ -68,12 +97,16 @@ export default function UploadBox() {
 
         setLoading(true);
 
-        const response = await api.post("/ai/chat", {
-            text,
-            question,
-        });
+        try {
+            const response = await api.post("/ai/chat", {
+                text,
+                question,
+            });
 
-        setAnswer(response.data.answer);
+            setAnswer(response.data.answer);
+        } catch (error) {
+            alert("Question failed");
+        }
 
         setLoading(false);
     };
@@ -143,6 +176,26 @@ export default function UploadBox() {
                             Notes
                         </button>
 
+                        <select
+                            value={language}
+                            onChange={(e)=>setLanguage(e.target.value)}
+                            className="border rounded px-3 py-2"
+                        >
+                            <option>Hindi</option>
+                            <option>Marathi</option>
+                            <option>English</option>
+                            <option>French</option>
+                            <option>German</option>
+                            <option>Spanish</option>
+                        </select>
+
+                        <button
+                            onClick={translatePDF}
+                            className="bg-cyan-600 text-white px-4 py-2 rounded"
+                        >
+                            Translate
+                        </button>
+
                     </div>
 
                 </div>
@@ -150,17 +203,13 @@ export default function UploadBox() {
             )}
 
             {loading && (
-
                 <div className="mt-6 text-lg font-semibold">
                     AI is working...
                 </div>
-
             )}
 
-            {summary && (
-
+                        {summary && (
                 <div className="mt-6 bg-white rounded-xl shadow p-6">
-
                     <h2 className="text-2xl font-bold mb-4">
                         AI Summary
                     </h2>
@@ -168,15 +217,11 @@ export default function UploadBox() {
                     <pre className="whitespace-pre-wrap">
                         {summary}
                     </pre>
-
                 </div>
-
             )}
 
             {notes && (
-
                 <div className="mt-6 bg-white rounded-xl shadow p-6">
-
                     <h2 className="text-2xl font-bold mb-4">
                         AI Notes
                     </h2>
@@ -184,13 +229,22 @@ export default function UploadBox() {
                     <pre className="whitespace-pre-wrap">
                         {notes}
                     </pre>
-
                 </div>
+            )}
 
+            {translation && (
+                <div className="mt-6 bg-white rounded-xl shadow p-6">
+                    <h2 className="text-2xl font-bold mb-4">
+                        🌍 Translation ({language})
+                    </h2>
+
+                    <pre className="whitespace-pre-wrap">
+                        {translation}
+                    </pre>
+                </div>
             )}
 
             {filename && (
-
                 <div className="mt-6 bg-white rounded-xl shadow p-6">
 
                     <h2 className="text-2xl font-bold mb-4">
@@ -201,7 +255,7 @@ export default function UploadBox() {
                         className="w-full border rounded-lg p-3"
                         placeholder="Ask anything from this PDF..."
                         value={question}
-                        onChange={(e)=>setQuestion(e.target.value)}
+                        onChange={(e) => setQuestion(e.target.value)}
                     />
 
                     <button
@@ -212,11 +266,10 @@ export default function UploadBox() {
                     </button>
 
                     {answer && (
-
                         <div className="mt-6">
 
                             <h3 className="font-bold text-xl mb-3">
-                                Answer
+                                AI Answer
                             </h3>
 
                             <pre className="whitespace-pre-wrap">
@@ -224,13 +277,12 @@ export default function UploadBox() {
                             </pre>
 
                         </div>
-
                     )}
 
                 </div>
-
             )}
 
         </div>
     );
 }
+

@@ -4,7 +4,8 @@ from pydantic import BaseModel
 from app.services.gemini_service import (
     summarize_pdf,
     ask_pdf,
-    generate_notes
+    generate_notes,
+    translate_pdf
 )
 
 router = APIRouter(prefix="/ai", tags=["AI"])
@@ -17,6 +18,11 @@ class SummaryRequest(BaseModel):
 class ChatRequest(BaseModel):
     text: str
     question: str
+
+
+class TranslateRequest(BaseModel):
+    text: str
+    language: str
 
 
 @router.post("/summary")
@@ -37,4 +43,11 @@ def chat(data: ChatRequest):
 def notes(data: SummaryRequest):
     return {
         "notes": generate_notes(data.text)
+    }
+
+
+@router.post("/translate")
+def translate(data: TranslateRequest):
+    return {
+        "translation": translate_pdf(data.text, data.language)
     }
