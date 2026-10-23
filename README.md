@@ -24,6 +24,18 @@ IntelliPDF is an AI-powered document intelligence and study assistant built with
 
 ---
 
+## 📸 Screenshots & Preview
+
+| 🏠 Home & Document Dropzone | 📑 Split-Screen Chat & PDF Viewer |
+|:---:|:---:|
+| ![Home](screenshots/home.png) | ![Chat & Split-Screen](screenshots/chats.png) |
+
+| 📝 AI Summary & Notes | 🌍 Multilingual Translation |
+|:---:|:---:|
+| ![Summary](screenshots/summary.png) | ![Translation](screenshots/translator.png) |
+
+---
+
 ## 🛠 Tech Stack
 
 ### Frontend
